@@ -14,7 +14,27 @@ class TransactionList extends StatelessWidget {
     return // Transactions Cards
         Container(
           height: 300,
-          child: ListView.builder(
+          child: transactions.isEmpty
+           ? 
+           Column(
+             children: <Widget>[
+               Text(
+                 'No transaction added yet!',
+                 style: Theme.of(context).textTheme.headline6
+              ),
+              SizedBox( height: 20,),
+              Container(
+                height: 200,
+                child: Image.asset(
+                  'assets/images/waiting.png',
+                  fit: BoxFit.cover
+                ),
+              )
+             ]
+           ) 
+          
+          : 
+          ListView.builder(
             itemBuilder: (ctx, index) {   // ctx for "context", index for List index
               return Card(
                 child: Row(
@@ -48,10 +68,14 @@ class TransactionList extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget> [
+
+                        // Title
                         Text(
                           transactions[index].title,
                           style: Theme.of(context).textTheme.headline6
                         ),
+
+                        // Date
                         Text(
                           // DateFormat('yyyy-MM-dd').format(transactionItem.date) ,   this is also possible with -()dash
                           // DateFormat('yyyy/MM/dd').format(transactionItem.date) ,   "/" between year month etc
@@ -60,6 +84,7 @@ class TransactionList extends StatelessWidget {
                             color: Colors.grey
                           ),  
                         ),
+
                       ]
                     )
                   ],
