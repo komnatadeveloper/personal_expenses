@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
@@ -8,7 +9,17 @@ import './models/transaction.dart';
 
 
 
-void main() => runApp(MyApp());
+void main()  {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    
+    DeviceOrientation.portraitDown,    
+  ]).then( ( _ ) => runApp( new MyApp()) );  
+  
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -118,11 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
 
-      appBar: AppBar(
+      final varAppBar = AppBar(
         
         title: Text(
             'Personal Expenses',
@@ -133,9 +144,12 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.add, ),
             onPressed: () => _startAddNewTransaction(context)
           )
-        ],
-        
-      ),
+        ], 
+      );
+
+    return Scaffold(
+
+      appBar: varAppBar,
 
       body: SingleChildScrollView(
         child: Column(
@@ -153,9 +167,16 @@ class _MyHomePageState extends State<MyHomePage> {
           //     elevation: 5,
           //   ),
           // ), 
-          Chart(_recentTransactions),
+          Container(
+            height: (MediaQuery.of(context).size.height - varAppBar.preferredSize.height - MediaQuery.of(context).padding.top ) * 0.35 ,
+            child: Chart(_recentTransactions)
+          ),
 
-          TransactionList(_userTransactions, _deleteTransaction)
+
+          Container(
+            height: (MediaQuery.of(context).size.height - varAppBar.preferredSize.height - MediaQuery.of(context).padding.top ) * 0.65,
+            child: TransactionList(_userTransactions, _deleteTransaction)
+          )
           
             
           ],
