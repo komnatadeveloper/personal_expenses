@@ -11,13 +11,16 @@ import './models/transaction.dart';
 
 void main()  {
 
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
     
-    DeviceOrientation.portraitDown,    
-  ]).then( ( _ ) => runApp( new MyApp()) );  
+  //   DeviceOrientation.portraitDown,    
+  // ]).then( ( _ ) => runApp( new MyApp()) );  
+
+
+  runApp(  MyApp());
   
 }
 
@@ -86,6 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
+  bool _showChart = false;
+
   List<Transaction> get _recentTransactions {
 
     return _userTransactions.where((transaction) {
@@ -113,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startAddNewTransaction( BuildContext ctx ) {
     showModalBottomSheet(
       context: ctx, 
-      builder: (bCtx) {
+      builder: ( _ ) {
         return GestureDetector(
           onTap: () {},
           child: NewTransaction(_addNewTransaction),
@@ -133,19 +138,35 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-      final varAppBar = AppBar(
-        
-        title: Text(
-            'Personal Expenses',
-            // style: TextStyle(fontFamily: 'OpenSans'),
-          ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add, ),
-            onPressed: () => _startAddNewTransaction(context)
-          )
-        ], 
-      );
+    final mediaQuery = MediaQuery.of(context);
+
+    final isLandScape = mediaQuery.orientation == Orientation.landscape;
+
+
+
+    final varAppBar = AppBar(
+      
+      title: Text(
+          'Personal Expenses',
+          // style: TextStyle(fontFamily: 'OpenSans'),
+        ),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add, ),
+          onPressed: () => _startAddNewTransaction(context)
+        )
+      ], 
+    );
+
+    final transactionListWidget = Container(
+      height: (mediaQuery.size.height 
+        - varAppBar.preferredSize.height 
+        - mediaQuery.padding.top 
+        ) * 0.7,
+      child: TransactionList(_userTransactions, _deleteTransaction)
+    );
+
+
 
     return Scaffold(
 
@@ -167,16 +188,40 @@ class _MyHomePageState extends State<MyHomePage> {
           //     elevation: 5,
           //   ),
           // ), 
-          Container(
-            height: (MediaQuery.of(context).size.height - varAppBar.preferredSize.height - MediaQuery.of(context).padding.top ) * 0.35 ,
+
+          if (isLandScape)  Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Show Chart'
+              ),
+              Switch(
+                value: _showChart,
+                onChanged: (val) {
+                  setState(() {
+                    _showChart = val;
+                  });
+                },
+              ),
+            ],                      
+          ),
+
+          if( !isLandScape) Container(
+            height: (mediaQuery.size.height - varAppBar.preferredSize.height - mediaQuery.padding.top ) * 0.3 ,
             child: Chart(_recentTransactions)
           ),
 
+          if( !isLandScape) transactionListWidget,
 
+          if( isLandScape) _showChart 
+          ? 
           Container(
-            height: (MediaQuery.of(context).size.height - varAppBar.preferredSize.height - MediaQuery.of(context).padding.top ) * 0.65,
-            child: TransactionList(_userTransactions, _deleteTransaction)
+            height: (mediaQuery.size.height - varAppBar.preferredSize.height - mediaQuery.padding.top ) * 0.7 ,
+            child: Chart(_recentTransactions) 
           )
+          :
+          transactionListWidget
+          
           
             
           ],
