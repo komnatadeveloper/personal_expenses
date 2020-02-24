@@ -142,10 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     final mediaQuery = MediaQuery.of(context);
-
     final isLandScape = mediaQuery.orientation == Orientation.landscape;
-
-
 
     final PreferredSizeWidget varAppBar = Platform.isIOS 
 
