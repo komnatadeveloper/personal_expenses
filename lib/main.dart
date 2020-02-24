@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -191,11 +193,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
           if (isLandScape)  Row(
             mainAxisAlignment: MainAxisAlignment.center,
+
+            // Switch and its Text
             children: <Widget>[
               Text(
                 'Show Chart'
               ),
-              Switch(
+              Switch.adaptive(
                 value: _showChart,
                 onChanged: (val) {
                   setState(() {
@@ -230,10 +234,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // Floating Action Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context)
-      ),
+      floatingActionButton: Platform.isIOS 
+        ? 
+        Container()  // Empty container 
+        :  
+        FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context)
+        ),
 
     );
   }
