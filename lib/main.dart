@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -146,19 +147,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-    final varAppBar = AppBar(
-      
-      title: Text(
-          'Personal Expenses',
-          // style: TextStyle(fontFamily: 'OpenSans'),
-        ),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add, ),
-          onPressed: () => _startAddNewTransaction(context)
-        )
-      ], 
-    );
+    final PreferredSizeWidget varAppBar = Platform.isIOS 
+
+      // for IOS NavigationBar
+      ? CupertinoNavigationBar(
+        middle: Text(
+            'Personal Expenses',
+            // style: TextStyle(fontFamily: 'OpenSans'),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+
+              GestureDetector(
+                child: Icon(CupertinoIcons.add ),
+                onTap: () => _startAddNewTransaction(context)
+              ),
+
+            ],
+          ),
+
+      ) 
+
+
+      // for Android AppBar
+      : AppBar(      
+        title: Text(
+            'Personal Expenses',
+            // style: TextStyle(fontFamily: 'OpenSans'),
+          ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add, ),
+            onPressed: () => _startAddNewTransaction(context)
+          )
+        ], 
+      );
 
     final transactionListWidget = Container(
       height: (mediaQuery.size.height 
@@ -168,13 +192,8 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TransactionList(_userTransactions, _deleteTransaction)
     );
 
-
-
-    return Scaffold(
-
-      appBar: varAppBar,
-
-      body: SingleChildScrollView(
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -197,7 +216,8 @@ class _MyHomePageState extends State<MyHomePage> {
             // Switch and its Text
             children: <Widget>[
               Text(
-                'Show Chart'
+                'Show Chart',
+                style: Theme.of(context).textTheme.headline6
               ),
               Switch.adaptive(
                 value: _showChart,
@@ -230,7 +250,23 @@ class _MyHomePageState extends State<MyHomePage> {
             
           ],
         ),
-      ),
+      )
+    ) ;
+
+
+
+    return Platform.isIOS 
+      ? 
+      CupertinoPageScaffold(
+        navigationBar: varAppBar,
+        child: pageBody
+      ) 
+      : 
+      Scaffold(
+
+      appBar: varAppBar,
+
+      body: pageBody,
 
       // Floating Action Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
