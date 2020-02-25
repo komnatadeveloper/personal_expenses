@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
@@ -191,14 +190,42 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
   }
 
+  Widget _iosbuildContent( 
+    PreferredSizeWidget varAppBar, 
+    Widget pageBody 
+  ) {
+    return CupertinoPageScaffold(
+        navigationBar: varAppBar,
+        child: pageBody
+      );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _androidbuildContent(
+    PreferredSizeWidget varAppBar, 
+    Widget pageBody 
+  ) {
+    return Scaffold(
 
-    final mediaQuery = MediaQuery.of(context);
-    final isLandScape = mediaQuery.orientation == Orientation.landscape;
+      appBar: varAppBar,
 
-    final PreferredSizeWidget varAppBar = Platform.isIOS 
+      body: pageBody,
+
+      // Floating Action Button
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Platform.isIOS 
+        ? 
+        Container()  // Empty container 
+        :  
+        FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context)
+        ),
+
+    );
+  }
+
+  Widget _buildAppBar () {
+    return Platform.isIOS 
 
       // for IOS NavigationBar
       ? CupertinoNavigationBar(
@@ -234,6 +261,17 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ], 
       );
+
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    final mediaQuery = MediaQuery.of(context);
+    final isLandScape = mediaQuery.orientation == Orientation.landscape;
+
+    final PreferredSizeWidget varAppBar = _buildAppBar();
 
     final transactionListWidget = Container(
       height: (mediaQuery.size.height 
@@ -284,29 +322,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Platform.isIOS 
       ? 
-      CupertinoPageScaffold(
-        navigationBar: varAppBar,
-        child: pageBody
-      ) 
+      _iosbuildContent( varAppBar, pageBody ) 
       : 
-      Scaffold(
-
-      appBar: varAppBar,
-
-      body: pageBody,
-
-      // Floating Action Button
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Platform.isIOS 
-        ? 
-        Container()  // Empty container 
-        :  
-        FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () => _startAddNewTransaction(context)
-        ),
-
-    );
+      _androidbuildContent( varAppBar, pageBody );
+      
   }
 }
 
