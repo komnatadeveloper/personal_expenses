@@ -36,15 +36,20 @@ class TransactionList extends StatelessWidget {
         }
       )    
     : 
-    ListView.builder(
-      itemBuilder: (ctx, index) {   // ctx for "context", index for List index
-        
-        // instead of Card, we will now use ListTile Widget
-        return TransactionItem(transaction: transactions[index], deleteTransaction: deleteTransaction);
-      },
-      itemCount: transactions.length,
+    ListView(
+      children: <Widget>[
+        ...transactions.map( ( transactionItem )  {
 
-  );
+          return TransactionItem(
+            key: ValueKey(transactionItem.id),
+            transaction: transactionItem, 
+            deleteTransaction: deleteTransaction
+          );
+            }).toList()
+        
+      ],
+      
+    );  
   }
 }
 
